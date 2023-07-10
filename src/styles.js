@@ -69,3 +69,9 @@ export const Button = styled.button`
     font-size: 14px;
   } */
 `;
+
+export const LoadingP = styled.p`
+  padding: 140px 60px;
+
+  font-weight: 700;
+`;
