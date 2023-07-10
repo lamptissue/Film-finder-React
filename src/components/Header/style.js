@@ -1,7 +1,8 @@
 import styled from "styled-components";
 
 export const HeaderContainer = styled.header`
-  background-color: yellowgreen;
+  /* background: #a7e1f8; */
+  background: #fddd7f;
   padding: 20px 40px;
   box-sizing: border-box;
   align-items: center;
@@ -11,15 +12,9 @@ export const HeaderContainer = styled.header`
   position: fixed;
   top: 0;
   z-index: 3;
+  box-shadow: 0 4px 6px #0000001a, 0 1px 3px #0003;
 
   @media (max-width: 800px) {
     padding: 20px;
   }
-`;
-
-export const Right = styled.div`
-  right: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;

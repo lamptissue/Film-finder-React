@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import { Pill } from "../../styles";
+import { Pill, Button } from "../../styles";
 
 export const Panel = styled.article`
-  background-color: red;
+  background: #ef785c;
   height: calc(100vh - 82px);
   width: 660px;
   position: fixed;
@@ -38,6 +38,8 @@ export const ClosedWrapper = styled(Pill)`
   display: ${({ $state }) => ($state === "entered" ? "flex" : "none")};
 
   cursor: pointer;
+  width: 30px;
+  height: 30px;
   top: 120px;
   right: 40px;
   position: fixed;
@@ -59,4 +61,8 @@ export const Background = styled.div`
   opacity: ${({ $state }) => ($state === "entering" || $state === "entered" ? 1 : 0)};
   pointer-events: ${({ $state }) => ($state === "exited" ? "none" : "auto")};
   transition: 300ms;
+`;
+
+export const FavouriteButton = styled(Button)`
+  margin-bottom: 10px;
 `;

@@ -1,9 +1,7 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  background-color: blue;
   padding: 140px 40px;
-  overflow: ${({ $isPanelOpen }) => ($isPanelOpen ? "hidden" : "scroll")};
   position: ${({ $isPanelOpen }) => ($isPanelOpen ? "fixed" : "unset")};
   top: ${({ $isPanelOpen, $top }) => ($isPanelOpen ? `-${$top}px` : 0)};
 
@@ -22,10 +20,10 @@ export const H2 = styled.h2`
 
 export const FilmList = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   grid-column-gap: 40px;
-  grid-row-gap: 120px;
-  margin-top: 40px;
+  grid-row-gap: 80px;
+  margin-top: 20px;
   max-width: 1200px;
 
   @media (max-width: 1200px) {
@@ -44,4 +42,5 @@ export const NoFilmsContainer = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  height: 50vh;
 `;

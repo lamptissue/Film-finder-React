@@ -3,7 +3,9 @@ import { HeaderContainer } from "./style";
 
 const Header = ({ children }) => (
   <HeaderContainer>
-    <h1>Film Finder</h1>
+    <a href='/'>
+      <h1>Film Finder</h1>
+    </a>
     {children}
     {/*this is where the search componenet renders*/}
   </HeaderContainer>

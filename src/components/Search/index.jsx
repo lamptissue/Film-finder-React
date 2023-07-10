@@ -1,12 +1,11 @@
 import React, { useRef, useState } from "react";
-import { SearchContainer, Input, Wrapper, FaveButtonContainer, Counter } from "./style";
-import MagnifyingIcon from "../../assets/search1.svg";
-import { Close, Button } from "../../styles";
+import { SearchContainer, Input, Wrapper, FaveButtonContainer, Counter, SearchClose, FavouriteButton } from "./style";
+import MagnifyingIcon from "../../assets/search.svg";
 
 const FaveButton = ({ showFaves, favefilmIds, toggleShowFaves }) => (
   <FaveButtonContainer>
     <Counter>{favefilmIds}</Counter>
-    <Button onClick={toggleShowFaves}>{showFaves ? "Hide faves" : "Show faves"}</Button>
+    <FavouriteButton onClick={toggleShowFaves}>{showFaves ? "Hide faves" : "Show faves"}</FavouriteButton>
   </FaveButtonContainer>
 );
 
@@ -32,9 +31,9 @@ const Search = ({ filterFilms, showFaves, favefilmIds, toggleShowFaves }) => {
     <Wrapper>
       <FaveButton showFaves={showFaves} favefilmIds={favefilmIds} toggleShowFaves={toggleShowFaves} />
       <SearchContainer $showOnDesktop={showOnDesktop}>
-        <img src={MagnifyingIcon} onClick={toggleSearch} />
+        <img src={MagnifyingIcon} onClick={toggleSearch} style={{ width: "20px" }} />
         <Input ref={inputEl} type='text' name='search' autoComplete='off' onChange={handleChange} />
-        <Close onClick={clearSearch} />
+        <SearchClose onClick={clearSearch} />
       </SearchContainer>
     </Wrapper>
   );

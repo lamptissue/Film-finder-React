@@ -1,11 +1,13 @@
 import styled from "styled-components";
-import { Pill } from "../../styles";
+import { Pill, Button } from "../../styles";
 
 export const SearchContainer = styled(Pill)`
-  width: ${({ $showOnDesktop }) => ($showOnDesktop ? "420px" : "20px")};
+  width: ${({ $showOnDesktop }) => ($showOnDesktop ? "420px" : "35px")};
+  height: 35px;
   transition: 300ms;
   @media (max-width: 800px) {
-    width: 85%;
+    width: 80%;
+    margin: 10px;
   }
   input,
   button {
@@ -30,12 +32,12 @@ export const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   @media (max-width: 800px) {
-    background: yellow;
-    border-top: 2px solid black;
+    background: #fddd7f;
+    box-shadow: 0 4px 6px #0000001a, 0 1px 3px #0003;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 64px;
+    height: 70px;
     width: 100vw;
     left: 0;
     bottom: 0;
@@ -46,21 +48,52 @@ export const Wrapper = styled.div`
 
 export const FaveButtonContainer = styled.div`
   display: flex;
+  margin-right: 20px;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 900px) {
     position: relative;
-    left: -15px;
+    left: -5px;
   }
 `;
 
 export const Counter = styled(Pill)`
   position: relative;
-  right: -120px;
-  bottom: 5px;
-  padding: 4px;
+  right: -110px;
+  bottom: 10px;
 
   @media (max-width: 1000px) {
-    right: -120px;
+    right: -100px;
     padding: 2px;
+  }
+`;
+
+export const SearchClose = styled.button`
+  background: none;
+  border: 0;
+  cursor: pointer;
+  height: 30px;
+  width: 30px;
+  padding: 0;
+  position: relative;
+  &::before,
+  &::after {
+    background-color: #000;
+    content: "";
+    height: 20px;
+    width: 2px;
+    position: absolute;
+    top: 5px;
+  }
+  &::before {
+    transform: rotate(45deg);
+  }
+  &::after {
+    transform: rotate(-45deg);
+  }
+`;
+
+export const FavouriteButton = styled(Button)`
+  @media (max-width: 800px) {
+    width: 105px;
   }
 `;

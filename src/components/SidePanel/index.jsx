@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
-import { Panel, Em, P, ClosedWrapper, Background } from "./style";
-import { Close, Button } from "../../styles";
+import { Panel, Em, P, ClosedWrapper, Background, FavouriteButton } from "./style";
+import { Close } from "../../styles";
 import Film from "../Film";
 
 const SidePanel = ({ film, closePanel, state, toggleFave }) => {
@@ -24,9 +24,9 @@ const SidePanel = ({ film, closePanel, state, toggleFave }) => {
 
         {film && (
           <>
-            <Button onClick={() => toggleFave(film.id)}>
-              {film.isFaved ? "Remove favourite book" : "Add favourite book"}
-            </Button>
+            <FavouriteButton onClick={() => toggleFave(film.id)}>
+              {film.isFaved ? "Remove favourite film" : "Add favourite film"}
+            </FavouriteButton>
             <Film film={film} isLarge={true} />
 
             <P>{film.Description}</P>

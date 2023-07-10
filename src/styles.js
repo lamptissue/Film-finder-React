@@ -8,6 +8,8 @@ export const GlobalStyle = createGlobalStyle`
   }
   body {
     font-family: 'Poppins', sans-serif;
+    /* background: #fddd7f */
+    background: #F3AFAF;
   }
 
 a {
@@ -17,12 +19,12 @@ a {
 `;
 
 export const Pill = styled.div`
-  background: #a7e1f8;
+  background: #daebd4;
   border: 2px solid #000;
-  border-radius: 30px;
-  height: 20px;
-  width: 20px;
-  padding: 8px;
+  border-radius: 22px;
+  height: 25px;
+  width: 25px;
+  padding: 10px;
   align-items: center;
   justify-content: center;
   overflow: hidden;
@@ -33,19 +35,19 @@ export const Close = styled.button`
   background: none;
   border: 0;
   cursor: pointer;
-  height: 24px;
-  width: 24px;
+  height: 30px;
+  width: 30px;
   padding: 0;
   position: relative;
   &::before,
   &::after {
     background-color: #000;
     content: "";
-    height: 24px;
+    height: 20px;
     width: 2px;
     position: absolute;
-    top: 0;
-    left: 9px;
+    top: 5px;
+    left: 3px;
   }
   &::before {
     transform: rotate(45deg);
@@ -59,11 +61,11 @@ export const Button = styled.button`
   border-radius: 30px;
   padding: 10px;
   border: 2px solid #000;
-  background: transparent;
-  font-size: 18px;
+  background: #f8f9fa;
+  font-size: 15px;
   cursor: pointer;
-
+  /* 
   @media (max-width: 1000px) {
     font-size: 14px;
-  }
+  } */
 `;
