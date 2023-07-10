@@ -16,3 +16,10 @@ export const HeaderContainer = styled.header`
     padding: 20px;
   }
 `;
+
+export const Right = styled.div`
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;

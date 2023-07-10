@@ -38,3 +38,10 @@ export const FilmList = styled.div`
     grid-column-gap: 20px;
   }
 `;
+
+export const NoFilmsContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+`;

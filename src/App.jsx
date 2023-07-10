@@ -8,9 +8,10 @@ import { Transition } from "react-transition-group";
 
 function App() {
   const [films, setFilms] = useState([]);
-  const [selectedFilm, setSelectedFilm] = useState(null);
   const [showPanel, setShowPanel] = useState(false);
   const [filteredFilms, setFilteredFilms] = useState([]);
+  const [showFaves, setShowFaves] = useState(false);
+  const favefilmIds = JSON.parse(localStorage.getItem("favefilmIds") || "[]");
 
   useEffect(() => {
     //add axios?
@@ -19,8 +20,7 @@ function App() {
         //get the data from API
         const response = await fetch("https://repulsive-crab-hem.cyclic.app/api/films");
         const data = await response.json(); //convert data to json
-        setFilms(data.data.films);
-        // setFilteredFilms(films);
+        setFilms(data.data.films.map((film) => ({ ...film, isFaved: favefilmIds.includes(film.id) })));
       } catch (error) {
         console.error("There are errors", error);
       }
@@ -30,11 +30,23 @@ function App() {
 
   useEffect(() => {
     // Perform initial filtering of films
-    setFilteredFilms(films);
+    setFilteredFilms(films.filter((film) => !film.isFiltered));
   }, [films]);
 
-  const pickFilm = (film) => {
-    setSelectedFilm(film);
+  const toggleFave = (filmId) => {
+    setFilms((films) => {
+      const updatedFilms = films.map((film) => (film.id === filmId ? { ...film, isFaved: !film.isFaved } : film));
+
+      localStorage.setItem(
+        "favefilmIds",
+        JSON.stringify(updatedFilms.filter(({ isFaved }) => isFaved).map(({ id }) => id))
+      );
+      return updatedFilms;
+    });
+  };
+
+  const pickFilm = (filmId) => {
+    setFilms((films) => films.map((film) => ({ ...film, isPicked: film.id === filmId })));
     setShowPanel(true);
   };
 
@@ -42,34 +54,64 @@ function App() {
     setShowPanel(false);
   };
 
+  // const filterFilms = (searchTerm) => {
+  //   const stringSearch = (filmAttribute, searchTerm) => filmAttribute.toLowerCase().includes(searchTerm.toLowerCase());
+
+  //   if (!searchTerm) {
+  //     setFilteredFilms(films);
+  //   } else {
+  //     setFilteredFilms(
+  //       films.filter((film) => stringSearch(film.Title, searchTerm) || stringSearch(film.Director.Name, searchTerm))
+  //     );
+  //   }
+  // };
+
   const filterFilms = (searchTerm) => {
     const stringSearch = (filmAttribute, searchTerm) => filmAttribute.toLowerCase().includes(searchTerm.toLowerCase());
 
-    if (!searchTerm) {
-      setFilteredFilms(films);
-    } else {
-      setFilteredFilms(
-        films.filter((film) => stringSearch(film.Title, searchTerm) || stringSearch(film.Director.Name, searchTerm))
-      );
-    }
+    setFilms((films) =>
+      films.map((film) => {
+        const isFiltered = searchTerm
+          ? !stringSearch(film.Title, searchTerm) && !stringSearch(film.Director.Name, searchTerm)
+          : false;
+        return { ...film, isFiltered };
+      })
+    );
   };
 
-  const hasFiltered = filteredFilms.length !== films.length;
+  const toggleShowFaves = () => {
+    setShowFaves((showFaves) => !showFaves);
+  };
+  const hasFiltered = films.some((film) => film.isFiltered);
+
+  // const displayFilms = hasFiltered ? films.filter((film) => !film.isFiltered) : films;
+  const displayFilms = hasFiltered
+    ? films.filter((film) => !film.isFiltered)
+    : showFaves
+    ? films.filter((film) => film.isFaved)
+    : films;
+
+  const selectedFilm = films.find((film) => film.isPicked);
 
   return (
     <>
       <GlobalStyle />
       <Header>
-        <Search filterFilms={filterFilms} />
+        <Search
+          filterFilms={filterFilms}
+          showFaves={showFaves}
+          toggleShowFaves={toggleShowFaves}
+          favefilmIds={favefilmIds.length}
+        />
       </Header>
       <FilmsContainer
-        films={filteredFilms}
+        films={displayFilms}
         pickFilm={pickFilm}
         isPanelOpen={showPanel}
         title={hasFiltered ? "Search results" : "All Films"}
       />
       <Transition in={showPanel} timeout={300}>
-        {(state) => <SidePanel film={selectedFilm} closePanel={closePanel} state={state} />}
+        {(state) => <SidePanel film={selectedFilm} closePanel={closePanel} toggleFave={toggleFave} state={state} />}
       </Transition>
     </>
   );

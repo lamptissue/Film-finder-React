@@ -1,7 +1,14 @@
 import React, { useRef, useEffect, useState } from "react";
 import { debounce } from "lodash-es";
-import { H2, Container, FilmList } from "./style";
+import { H2, Container, FilmList, NoFilmsContainer } from "./style";
 import Film from "../Film";
+
+const NoFilmsMessage = () => (
+  <NoFilmsContainer>
+    <h3>Oh dear!</h3>
+    <h4>There are no films to see here.</h4>
+  </NoFilmsContainer>
+);
 
 const FilmsContainer = ({ films, pickFilm, isPanelOpen, title }) => {
   const [scroll, setScroll] = useState(0); //this stores the y value in the browser as a pixle value
@@ -31,14 +38,17 @@ const FilmsContainer = ({ films, pickFilm, isPanelOpen, title }) => {
   return (
     <Container $isPanelOpen={isPanelOpen} $top={scroll}>
       <H2>{title}</H2>
-      <FilmList>
-        {films.map((film) => (
-          <Film key={film.id} film={film} pickFilm={pickFilm} />
-        ))}
-      </FilmList>
+      {films.length > 0 ? (
+        <FilmList>
+          {films.map((film) => (
+            <Film key={film.id} film={film} pickFilm={pickFilm} />
+          ))}
+        </FilmList>
+      ) : (
+        <NoFilmsMessage />
+      )}
     </Container>
   );
 };
-
 export default FilmsContainer;
 //transient prop wont be passed down to other components

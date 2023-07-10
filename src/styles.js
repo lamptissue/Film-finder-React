@@ -54,3 +54,16 @@ export const Close = styled.button`
     transform: rotate(-45deg);
   }
 `;
+export const Button = styled.button`
+  display: inline;
+  border-radius: 30px;
+  padding: 10px;
+  border: 2px solid #000;
+  background: transparent;
+  font-size: 18px;
+  cursor: pointer;
+
+  @media (max-width: 1000px) {
+    font-size: 14px;
+  }
+`;

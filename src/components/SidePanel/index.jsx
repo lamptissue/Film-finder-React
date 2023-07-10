@@ -1,8 +1,9 @@
 import React, { useRef, useEffect } from "react";
 import { Panel, Em, P, ClosedWrapper, Background } from "./style";
-import { Close } from "../../styles";
+import { Close, Button } from "../../styles";
 import Film from "../Film";
-const SidePanel = ({ film, closePanel, state }) => {
+
+const SidePanel = ({ film, closePanel, state, toggleFave }) => {
   const panelEl = useRef(null);
   const prevFilm = useRef(null);
 
@@ -13,7 +14,6 @@ const SidePanel = ({ film, closePanel, state }) => {
     prevFilm.current = film;
   }, [film, prevFilm]);
 
-  console.log(state);
   return (
     <>
       <Background onClick={closePanel} $state={state} />
@@ -21,8 +21,12 @@ const SidePanel = ({ film, closePanel, state }) => {
         <ClosedWrapper onClick={closePanel} $state={state}>
           <Close />
         </ClosedWrapper>
+
         {film && (
           <>
+            <Button onClick={() => toggleFave(film.id)}>
+              {film.isFaved ? "Remove favourite book" : "Add favourite book"}
+            </Button>
             <Film film={film} isLarge={true} />
 
             <P>{film.Description}</P>
