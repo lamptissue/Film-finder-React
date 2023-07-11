@@ -17,4 +17,4 @@ This app uses React as the framework and builds on the existing Film Finder API.
 - Styled Components
 - Vite
 
-  Once downloaded run - npm run dev to start the app
+You can download the app and try it for yourself - npm run dev or check out the [Demo](https://film-finder-react.netlify.app/)
