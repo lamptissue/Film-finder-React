@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import FilmsContainer from "./components/FilmsContainer";
 import Header from "./components/Header";
 import { GlobalStyle, LoadingP } from "./styles";
 import SidePanel from "./components/SidePanel";
 import Search from "./components/Search";
+import Dropdown from "./components/Dropdown";
+import Login from "./components/Login";
+import SignUp from "./components/SignUp";
 import { Transition } from "react-transition-group";
+import Profile from "./components/Profile";
 
 function App() {
   const [films, setFilms] = useState([]);
@@ -84,28 +89,42 @@ function App() {
 
   return (
     <>
-      <GlobalStyle />
-      <Header>
-        <Search
-          filterFilms={filterFilms}
-          showFaves={showFaves}
-          toggleShowFaves={toggleShowFaves}
-          favefilmIds={favefilmIds.length}
-        />
-      </Header>
-      {loading ? (
-        <LoadingP>Hold onto your hat! The films are loading!</LoadingP>
-      ) : (
-        <FilmsContainer
-          films={displayFilms}
-          pickFilm={pickFilm}
-          isPanelOpen={showPanel}
-          title={hasFiltered ? "Search results" : "All Films"}
-        />
-      )}
-      <Transition in={showPanel} timeout={300}>
-        {(state) => <SidePanel film={selectedFilm} closePanel={closePanel} toggleFave={toggleFave} state={state} />}
-      </Transition>
+      <Router>
+        <GlobalStyle />
+        <Header>
+          <Search
+            filterFilms={filterFilms}
+            showFaves={showFaves}
+            toggleShowFaves={toggleShowFaves}
+            favefilmIds={favefilmIds.length}
+          />
+          <Dropdown />
+        </Header>
+        <Routes>
+          <Route
+            path='/'
+            element={
+              loading ? (
+                <LoadingP>Hold onto your hat! The films are loading!</LoadingP>
+              ) : (
+                <FilmsContainer
+                  films={displayFilms}
+                  pickFilm={pickFilm}
+                  isPanelOpen={showPanel}
+                  title={hasFiltered ? "Search results" : "All Films"}
+                />
+              )
+            }
+          />
+          <Route path='/login' element={<Login />} />
+          <Route path='/signup' element={<SignUp />} />
+          <Route path='/profile' element={<Profile />} />
+        </Routes>
+
+        <Transition in={showPanel} timeout={300}>
+          {(state) => <SidePanel film={selectedFilm} closePanel={closePanel} toggleFave={toggleFave} state={state} />}
+        </Transition>
+      </Router>
     </>
   );
 }
