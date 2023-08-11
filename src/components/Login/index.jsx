@@ -21,17 +21,17 @@ function LoginPage() {
   const handleLoginSubmit = (e) => {
     e.preventDefault();
 
-    axios
-      .post("https://repulsive-crab-hem.cyclic.app/api/users/login", {
-        email,
-        password,
-      })
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    //   axios
+    //     .post("https://repulsive-crab-hem.cyclic.app/api/users/login", {
+    //       email,
+    //       password,
+    //     })
+    //     .then(function (response) {
+    //       console.log(response);
+    //     })
+    //     .catch(function (error) {
+    //       console.log(error);
+    //     });
   };
   return (
     <Container>
