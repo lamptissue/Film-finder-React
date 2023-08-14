@@ -18,9 +18,3 @@ export const HeaderContainer = styled.header`
     padding: 20px;
   }
 `;
-
-export const HeaderTest = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;

@@ -1,13 +1,12 @@
 import React from "react";
-import { HeaderContainer, HeaderTest } from "./style";
-// import user from "../../assets/user.svg";
+import { HeaderContainer } from "./style";
 
 const Header = ({ children }) => (
   <HeaderContainer>
     <a href='/'>
       <h1>Film Finder</h1>
     </a>
-    <HeaderTest>{children}</HeaderTest>
+    {children}
     {/*this is where the search componenet renders*/}
   </HeaderContainer>
 );
