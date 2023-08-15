@@ -18,3 +18,9 @@ export const HeaderContainer = styled.header`
     padding: 20px;
   }
 `;
+
+export const HeaderChildrenContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;

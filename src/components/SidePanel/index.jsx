@@ -24,7 +24,7 @@ const SidePanel = ({ film, closePanel, state, toggleFave }) => {
 
         {film && (
           <>
-            <FavouriteButton onClick={() => toggleFave(film.id)}>
+            <FavouriteButton onClick={() => toggleFave(film._id)}>
               {film.isFaved ? "Remove favourite film" : "Add favourite film"}
             </FavouriteButton>
             <Film film={film} isLarge={true} />

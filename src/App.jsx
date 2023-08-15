@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import FilmsContainer from "./components/FilmsContainer";
 import Header from "./components/Header";
 import { GlobalStyle, LoadingP } from "./styles";
 import SidePanel from "./components/SidePanel";
 import Search from "./components/Search";
+import Dropdown from "./components/Dropdown";
+import Login from "./components/Login";
+import SignUp from "./components/SignUp";
 import { Transition } from "react-transition-group";
+import Profile from "./components/Profile";
+import axios from "axios";
 
 function App() {
   const [films, setFilms] = useState([]);
@@ -12,7 +18,12 @@ function App() {
   const [filteredFilms, setFilteredFilms] = useState([]);
   const [showFaves, setShowFaves] = useState(false);
   const favefilmIds = JSON.parse(localStorage.getItem("favefilmIds") || "[]");
+
   const [loading, setLoading] = useState(true);
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user")) || {};
+  const [FaveouriteFilms, setFavouriteFilms] = useState([]);
+  const [userFavouritedFilmIds, setUserFavouritedFilmIds] = useState([]);
 
   useEffect(() => {
     //add axios?
@@ -29,7 +40,6 @@ function App() {
     };
     fetchData();
   }, []);
-
   useEffect(() => {
     // Perform initial filtering of films
     setFilteredFilms(films.filter((film) => !film.isFiltered));
@@ -37,18 +47,28 @@ function App() {
 
   const toggleFave = (filmId) => {
     setFilms((films) => {
-      const updatedFilms = films.map((film) => (film.id === filmId ? { ...film, isFaved: !film.isFaved } : film));
+      const updatedFilms = films.map((film) => (film._id === filmId ? { ...film, isFaved: !film.isFaved } : film));
 
-      localStorage.setItem(
-        "favefilmIds",
-        JSON.stringify(updatedFilms.filter(({ isFaved }) => isFaved).map(({ id }) => id))
-      );
+      if (!token) {
+        localStorage.setItem(
+          "favefilmIds",
+          JSON.stringify(updatedFilms.filter(({ isFaved }) => isFaved).map(({ _id }) => _id))
+        );
+      }
+      if (token) {
+        const filmToUpdate = updatedFilms.find((film) => film._id === filmId);
+        if (filmToUpdate.isFaved) {
+          addFilmToFavourites(filmId);
+        } else {
+          removeFilmFromFavourites(filmId);
+        }
+      }
       return updatedFilms;
     });
   };
 
   const pickFilm = (filmId) => {
-    setFilms((films) => films.map((film) => ({ ...film, isPicked: film.id === filmId })));
+    setFilms((films) => films.map((film) => ({ ...film, isPicked: film._id === filmId })));
     setShowPanel(true);
   };
 
@@ -82,30 +102,99 @@ function App() {
 
   const selectedFilm = films.find((film) => film.isPicked);
 
+  const addFilmToFavourites = (filmId) => {
+    axios
+      .post(
+        `https://repulsive-crab-hem.cyclic.app/api/users/${user.username}/films/${filmId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response);
+        setFavouriteFilms((prevFavouriteFilms) => [...prevFavouriteFilms, filmId]);
+        setFilms((films) => films.map((film) => (film._id === filmId ? { ...film, isFaved: true } : film)));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const removeFilmFromFavourites = (filmId) => {
+    axios
+      .delete(
+        `https://repulsive-crab-hem.cyclic.app/api/users/${user.username}/films/${filmId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response);
+        setFavouriteFilms((prevFavouriteFilms) => prevFavouriteFilms.filter((id) => id !== filmId));
+        setFilms((films) => films.map((film) => (film.id === filmId ? { ...film, isFaved: false } : film)));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  console.log("This is your captain speaking", FaveouriteFilms);
   return (
     <>
-      <GlobalStyle />
-      <Header>
-        <Search
-          filterFilms={filterFilms}
-          showFaves={showFaves}
-          toggleShowFaves={toggleShowFaves}
-          favefilmIds={favefilmIds.length}
-        />
-      </Header>
-      {loading ? (
-        <LoadingP>Hold onto your hat! The films are loading!</LoadingP>
-      ) : (
-        <FilmsContainer
-          films={displayFilms}
-          pickFilm={pickFilm}
-          isPanelOpen={showPanel}
-          title={hasFiltered ? "Search results" : "All Films"}
-        />
-      )}
-      <Transition in={showPanel} timeout={300}>
-        {(state) => <SidePanel film={selectedFilm} closePanel={closePanel} toggleFave={toggleFave} state={state} />}
-      </Transition>
+      <Router>
+        <GlobalStyle />
+        <Header>
+          <Routes>
+            {/* Render the Search component only on the home page */}
+            <Route
+              path='/'
+              element={
+                <>
+                  <Search
+                    filterFilms={filterFilms}
+                    showFaves={showFaves}
+                    toggleShowFaves={toggleShowFaves}
+                    favefilmIds={favefilmIds.length}
+                    FaveouriteFilms={FaveouriteFilms.length}
+                  />
+                </>
+              }
+            />
+          </Routes>
+          <Dropdown />
+        </Header>
+        <Routes>
+          <Route
+            path='/'
+            element={
+              loading ? (
+                <LoadingP>Hold onto your hat! The films are loading!</LoadingP>
+              ) : (
+                <FilmsContainer
+                  films={displayFilms}
+                  pickFilm={pickFilm}
+                  isPanelOpen={showPanel}
+                  title={hasFiltered ? "Search results" : "All Films"}
+                />
+              )
+            }
+          />
+          <Route path='/login' element={<Login />} />
+          <Route path='/signup' element={<SignUp />} />
+          <Route path='/profile' element={<Profile />} />
+          {/* <Route path='/profile' element={<Profile films={films} toggleFave={toggleFave} }/> */}
+        </Routes>
+        <Transition in={showPanel} timeout={300}>
+          {(state) => (
+            <SidePanel film={selectedFilm} closePanel={closePanel} toggleFave={toggleFave} state={state} user={user} />
+          )}
+        </Transition>
+      </Router>
     </>
   );
 }
