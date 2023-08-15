@@ -1,11 +1,12 @@
 import React, { useRef, useState } from "react";
 import { SearchContainer, Input, Wrapper, FaveButtonContainer, Counter, SearchClose, FavouriteButton } from "./style";
 import MagnifyingIcon from "../../assets/search.svg";
+const token = localStorage.getItem("token");
 
 const FaveButton = ({ showFaves, favefilmIds, toggleShowFaves, FaveouriteFilms, user }) => (
   <FaveButtonContainer>
-    {user && <Counter>{favefilmIds}</Counter>}
-    {!user && <Counter>{FaveouriteFilms}</Counter>}
+    {!token && <Counter>{favefilmIds}</Counter>}
+    {token && <Counter>{FaveouriteFilms}</Counter>}
 
     <FavouriteButton onClick={toggleShowFaves}>{showFaves ? "Hide faves" : "Show faves"}</FavouriteButton>
   </FaveButtonContainer>

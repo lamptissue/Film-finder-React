@@ -41,7 +41,7 @@ const FilmsContainer = ({ films, pickFilm, isPanelOpen, title }) => {
       {films.length > 0 ? (
         <FilmList>
           {films.map((film) => (
-            <Film key={film.id} film={film} pickFilm={pickFilm} />
+            <Film key={film._id} film={film} pickFilm={pickFilm} />
           ))}
         </FilmList>
       ) : (

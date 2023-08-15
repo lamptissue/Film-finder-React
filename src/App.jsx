@@ -67,6 +67,24 @@ function App() {
     });
   };
 
+  useEffect(() => {
+    // Fetch the user's favorite films when the page loads
+    if (token) {
+      axios
+        .get(`https://repulsive-crab-hem.cyclic.app/api/users/${user.username}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          const favoriteFilmIds = response.data.data.user.favouriteFilms;
+          setFavouriteFilms(favoriteFilmIds);
+        })
+        .catch((error) => {
+          console.error("Error fetching user's favorite films:", error);
+        });
+    }
+  }, [token, user.username]);
   const pickFilm = (filmId) => {
     setFilms((films) => films.map((film) => ({ ...film, isPicked: film._id === filmId })));
     setShowPanel(true);
@@ -124,23 +142,38 @@ function App() {
   };
 
   const removeFilmFromFavourites = (filmId) => {
+    // axios
+    //   .delete(
+    //     `https://repulsive-crab-hem.cyclic.app/api/users/${user.username}/films/${filmId}`,
+    //     {},
+    //     {
+    //       headers: {
+    //         Authorization: `Bearer ${token}`,
+    //       },
+    //     }
+    //   )
+    //   .then((response) => {
+    //     console.log(response);
+    //     setFavouriteFilms((prevFavouriteFilms) => prevFavouriteFilms.filter((id) => id !== filmId));
+    //     setFilms((films) => films.map((film) => (film._id === filmId ? { ...film, isFaved: false } : film)));
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
+
     axios
-      .delete(
-        `https://repulsive-crab-hem.cyclic.app/api/users/${user.username}/films/${filmId}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
+      .delete(`https://repulsive-crab-hem.cyclic.app/api/users/${user.username}/films/${filmId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         console.log(response);
-        setFavouriteFilms((prevFavouriteFilms) => prevFavouriteFilms.filter((id) => id !== filmId));
-        setFilms((films) => films.map((film) => (film.id === filmId ? { ...film, isFaved: false } : film)));
+        // Update the favorite films state after successful deletion
+        setFavouriteFilms((prevFilms) => prevFilms.filter((id) => id !== filmId));
       })
       .catch((error) => {
-        console.log(error);
+        console.error("Error deleting film:", error);
       });
   };
   console.log("This is your captain speaking", FaveouriteFilms);

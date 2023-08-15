@@ -22,11 +22,12 @@ export const LoginContainer = styled.div`
   padding: 30px;
   border-radius: 5px;
   box-shadow: 0 4px 6px #0000001a, 0 1px 3px #0003;
+  min-width: 600px;
 `;
 
-export const Form = styled.form`
-  height: 250px;
-`;
+// export const Form = styled.form`
+//   height: 250px;
+// `;
 
 export const StyledInput = styled.input`
   width: 100%;
