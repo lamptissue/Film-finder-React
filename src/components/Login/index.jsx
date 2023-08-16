@@ -29,8 +29,8 @@ function LoginPage() {
             axios
               .post("https://repulsive-crab-hem.cyclic.app/api/users/login", values)
               .then((response) => {
-                console.log("API Response:", response.data); // Log the response for debugging
-
+                console.log("API Response:", response.data);
+                localStorage.clear();
                 const token = response.data.token;
                 const user = response.data.data.user;
                 if (user) {

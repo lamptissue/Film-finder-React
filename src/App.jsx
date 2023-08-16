@@ -112,7 +112,7 @@ function App() {
         }
       }
     } catch (error) {
-      console.error("Error toggling favorite:", error);
+      console.error("Error toggling favourite:", error);
     }
   };
 
