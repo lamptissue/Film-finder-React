@@ -143,7 +143,7 @@ function App() {
         }
       }
     } catch (error) {
-      console.error("Error removing favorite:", error);
+      console.error("Error removing favourite:", error);
     }
   };
 
@@ -182,7 +182,7 @@ function App() {
         });
       }
     } catch (error) {
-      console.error("Error toggling show favorites:", error);
+      console.error("Error toggling show favourites:", error);
     }
   };
 
@@ -195,12 +195,12 @@ function App() {
     : films;
 
   const selectedFilm = films.find((film) => film.isPicked);
-  const totalFavoriteFilms = films.filter((film) => film.isFaved).length;
+  const totalFavouriteFilms = films.filter((film) => film.isFaved).length;
   return (
     <>
       <Router>
         <GlobalStyle />
-        <Header>
+        <Header closePanel={closePanel}>
           <Routes>
             <Route
               path='/'
@@ -211,7 +211,7 @@ function App() {
                     showFaves={showFaves}
                     toggleShowFaves={toggleShowFaves}
                     favefilmIds={favefilmIds.length}
-                    totalFavoriteFilms={totalFavoriteFilms}
+                    totalFavouriteFilms={totalFavouriteFilms}
                   />
                 </>
               }
