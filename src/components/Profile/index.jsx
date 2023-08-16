@@ -13,9 +13,11 @@ import {
   Ul,
   Li,
   RemoveButton,
+  LoadingP,
 } from "./style";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import "../../styles.css";
 
 const validationSchema = Yup.object({
   name: Yup.string().required(),
@@ -26,7 +28,8 @@ const validationSchema = Yup.object({
 function Profile() {
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user")) || {};
-  const [favouriteFilms, setFavouriteFilms] = useState([]);
+  const [favouriteFilmDetails, setFavouriteFilmDetails] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
@@ -36,36 +39,35 @@ function Profile() {
         },
       })
       .then((response) => {
-        const userData = response.data.data.user.favouriteFilms;
-        setFavouriteFilms(userData);
+        const userData = response.data.data.user;
+        const favouriteFilms = userData.favouriteFilms;
+
+        // Fetch film details using favouriteFilms array
+        axios
+          .get(`https://repulsive-crab-hem.cyclic.app/api/films`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            const filmsData = response.data.data.films;
+            const favouriteFilmTitles = favouriteFilms.map((filmId) => {
+              const film = filmsData.find((film) => film._id === filmId);
+              return film ? film.Title : "Unknown Title";
+            });
+            setFavouriteFilmDetails(favouriteFilmTitles);
+            setLoading(false); // Set loading to false after fetching data
+          })
+          .catch((error) => {
+            console.error("Error fetching film data:", error);
+            setLoading(false); // Set loading to false on error
+          });
       })
       .catch((error) => {
         console.error("Error fetching user data:", error);
+        setLoading(false); // Set loading to false on error
       });
-  }, []);
-
-  const [favouriteFilmDetails, setFavouriteFilmDetails] = useState([]);
-
-  useEffect(() => {
-    // Fetch film details using favouriteFilms array
-    axios
-      .get(`https://repulsive-crab-hem.cyclic.app/api/films`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        const filmsData = response.data.data.films;
-        const favouriteFilmTitles = favouriteFilms.map((filmId) => {
-          const film = filmsData.find((film) => film._id === filmId);
-          return film ? film.Title : "Unknown Title";
-        });
-        setFavouriteFilmDetails(favouriteFilmTitles);
-      })
-      .catch((error) => {
-        console.error("Error fetching film data:", error);
-      });
-  }, [favouriteFilms]);
+  }, [user.username, token]);
 
   const handleRemoveFilm = (filmId) => {
     axios
@@ -77,7 +79,7 @@ function Profile() {
       .then((response) => {
         console.log(response);
         // Update the favorite films state after successful deletion
-        setFavouriteFilms((prevFilms) => prevFilms.filter((id) => id !== filmId));
+        setFavouriteFilms((prevFilms) => prevFilms.filter((_id) => _id !== filmId));
       })
       .catch((error) => {
         console.error("Error deleting film:", error);
@@ -134,16 +136,16 @@ function Profile() {
         >
           <Form>
             <StyledLabel htmlFor='name'>Update name:</StyledLabel>
+            <ErrorMessage name='name' component='div' className='styledError' />
             <Field type='text' placeholder='name' name='name' as={StyledInput} />
-            <ErrorMessage name='name' component='div' />
 
             <StyledLabel htmlFor='password'>Update password:</StyledLabel>
+            <ErrorMessage name='password' component='div' className='styledError' />
             <Field type='password' placeholder='password' name='password' as={StyledInput} />
-            <ErrorMessage name='password' component='div' />
 
             <StyledLabel htmlFor='email'>Update email:</StyledLabel>
+            <ErrorMessage name='email' component='div' className='styledError' />
             <Field type='text' placeholder='email' name='email' as={StyledInput} />
-            <ErrorMessage name='email' component='div' />
 
             <ProfileButtonContainer>
               <StyledButton type='submit'>Update Profile</StyledButton>
@@ -155,17 +157,22 @@ function Profile() {
       <ProfileContainer>
         <H2>Favourite Films</H2>
 
-        <Ul>
-          {favouriteFilmDetails.length > 0 ? (
-            favouriteFilmDetails.map((filmTitle, index) => (
-              <Li key={index}>
-                {filmTitle} <RemoveButton onClick={() => handleRemoveFilm(favouriteFilms[index])}>Remove</RemoveButton>
-              </Li>
-            ))
-          ) : (
-            <H3>No films have been saved :(</H3>
-          )}
-        </Ul>
+        {loading ? (
+          <LoadingP>Loading your favorite films...</LoadingP>
+        ) : (
+          <Ul>
+            {favouriteFilmDetails.length > 0 ? (
+              favouriteFilmDetails.map((filmTitle, index) => (
+                <Li key={index}>
+                  {filmTitle}{" "}
+                  <RemoveButton onClick={() => handleRemoveFilm(favouriteFilms[index])}>Remove</RemoveButton>
+                </Li>
+              ))
+            ) : (
+              <H3>No films have been saved :(</H3>
+            )}
+          </Ul>
+        )}
       </ProfileContainer>
     </Container>
   );

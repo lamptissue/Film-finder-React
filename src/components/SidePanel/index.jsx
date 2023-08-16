@@ -3,7 +3,7 @@ import { Panel, Em, P, ClosedWrapper, Background, FavouriteButton } from "./styl
 import { Close } from "../../styles";
 import Film from "../Film";
 
-const SidePanel = ({ film, closePanel, state, toggleFave }) => {
+const SidePanel = ({ film, closePanel, state, toggleFave, removeFave }) => {
   const panelEl = useRef(null);
   const prevFilm = useRef(null);
 
@@ -12,7 +12,15 @@ const SidePanel = ({ film, closePanel, state, toggleFave }) => {
       panelEl.current.scrollTop = 0;
     }
     prevFilm.current = film;
-  }, [film, prevFilm]);
+  }, [film]);
+
+  const renderFavouriteButton = () => {
+    if (film.isFaved) {
+      return <FavouriteButton onClick={() => removeFave(film._id)}>Remove from Favorites</FavouriteButton>;
+    } else {
+      return <FavouriteButton onClick={() => toggleFave(film._id)}>Add to Favorites</FavouriteButton>;
+    }
+  };
 
   return (
     <>
@@ -24,9 +32,7 @@ const SidePanel = ({ film, closePanel, state, toggleFave }) => {
 
         {film && (
           <>
-            <FavouriteButton onClick={() => toggleFave(film._id)}>
-              {film.isFaved ? "Remove favourite film" : "Add favourite film"}
-            </FavouriteButton>
+            {renderFavouriteButton()}
             <Film film={film} isLarge={true} />
 
             <P>{film.Description}</P>
@@ -39,4 +45,5 @@ const SidePanel = ({ film, closePanel, state, toggleFave }) => {
     </>
   );
 };
+
 export default SidePanel;
