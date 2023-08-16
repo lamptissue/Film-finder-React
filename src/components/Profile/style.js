@@ -90,3 +90,8 @@ export const RemoveButton = styled(Button)`
     color: white;
   }
 `;
+export const LoadingP = styled.p`
+  padding: 140px 60px;
+
+  font-weight: 700;
+`;
