@@ -24,6 +24,9 @@ export const SignupContainer = styled.div`
   box-shadow: 0 4px 6px #0000001a, 0 1px 3px #0003;
   max-width: 700px;
   min-width: 650px;
+  @media (max-width: 800px) {
+    min-width: 350px;
+  }
 `;
 
 export const SignUpForm = styled.form`
