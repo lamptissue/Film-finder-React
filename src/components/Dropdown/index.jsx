@@ -16,7 +16,7 @@ function Dropdown() {
   };
 
   const handleSignOut = () => {
-    const confirmSignOut = window.confirm("Are you sure you want to Sign Out?");
+    const confirmSignOut = window.confirm("Are you sure you want to sign out?");
     // Show the sign-out warning
     if (confirmSignOut) {
       localStorage.clear();

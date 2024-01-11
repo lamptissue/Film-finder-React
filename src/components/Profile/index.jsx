@@ -88,18 +88,25 @@ function Profile() {
 
   ///needs checking
   const handleRemoveUser = () => {
-    axios
-      .delete(`https://repulsive-crab-hem.cyclic.app/api/users/${user.username}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
-      });
+    const confirmSignOut = window.confirm("Are you sure you want to delete your profile?");
+    if (confirmSignOut) {
+      axios
+        .delete(`https://repulsive-crab-hem.cyclic.app/api/users/${user.username}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          // Show the sign-out warning
+          localStorage.clear();
+          alert("Your profile has been deleted");
+          navigate("/");
+          console.log(response);
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+        });
+    }
   };
 
   return (
