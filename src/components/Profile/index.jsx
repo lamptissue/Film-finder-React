@@ -98,10 +98,10 @@ function Profile() {
         })
         .then((response) => {
           // Show the sign-out warning
-          localStorage.clear();
-          alert("Your profile has been deleted");
-          navigate("/");
           console.log(response);
+          navigate("/");
+          alert("Your profile has been deleted");
+          localStorage.clear();
         })
         .catch((error) => {
           console.error("Error fetching user data:", error);
