@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
   Container,
@@ -25,7 +26,9 @@ const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email address").required(),
 });
 
-function Profile() {
+function Profile({ films }) {
+  const navigate = useNavigate();
+
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user")) || {};
   const [favouriteFilmDetails, setFavouriteFilmDetails] = useState([]);
@@ -40,32 +43,19 @@ function Profile() {
       })
       .then((response) => {
         const userData = response.data.data.user;
-        const favouriteFilms = userData.favouriteFilms;
 
-        // Fetch film details using favouriteFilms array
-        axios
-          .get(`https://repulsive-crab-hem.cyclic.app/api/films`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((response) => {
-            const filmsData = response.data.data.films;
-            const favouriteFilmTitles = favouriteFilms.map((filmId) => {
-              const film = filmsData.find((film) => film._id === filmId);
-              return film ? film.Title : "Unknown Title";
-            });
-            setFavouriteFilmDetails(favouriteFilmTitles);
-            setLoading(false); // Set loading to false after fetching data
-          })
-          .catch((error) => {
-            console.error("Error fetching film data:", error);
-            setLoading(false); // Set loading to false on error
-          });
+        const userFavouriteFilms = userData.favouriteFilms;
+
+        const displayUserFavouriteFilms = userFavouriteFilms.map((filmId) => {
+          const film = films.find((film) => film._id === filmId);
+          return film ? { title: film.Title, id: film._id } : "Unknown Title";
+        });
+        setFavouriteFilmDetails(displayUserFavouriteFilms);
+        setLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching user data:", error);
-        setLoading(false); // Set loading to false on error
+        setLoading(false);
       });
   }, [user.username, token]);
 
@@ -78,18 +68,16 @@ function Profile() {
       })
       .then((response) => {
         console.log(response);
-        // Update the favorite films state after successful deletion
-        setFavouriteFilms((prevFilms) => prevFilms.filter((_id) => _id !== filmId));
+        setFavouriteFilmDetails((prevFilms) => prevFilms.filter((film) => film.id !== filmId));
       })
       .catch((error) => {
         console.error("Error deleting film:", error);
       });
   };
 
-  ///needs checking
   const handleRemoveUser = () => {
-    const confirmSignOut = window.confirm("Are you sure you want to delete your profile?");
-    if (confirmSignOut) {
+    const confirmDelete = window.confirm("Are you sure you want to delete your profile?");
+    if (confirmDelete) {
       axios
         .delete(`https://repulsive-crab-hem.cyclic.app/api/users/${user.username}`, {
           headers: {
@@ -97,10 +85,9 @@ function Profile() {
           },
         })
         .then((response) => {
-          // Show the sign-out warning
           console.log(response);
-          navigate("/");
           alert("Your profile has been deleted");
+          navigate("/");
           localStorage.clear();
         })
         .catch((error) => {
@@ -171,8 +158,8 @@ function Profile() {
             {favouriteFilmDetails.length > 0 ? (
               favouriteFilmDetails.map((filmTitle, index) => (
                 <Li key={index}>
-                  {filmTitle}{" "}
-                  <RemoveButton onClick={() => handleRemoveFilm(favouriteFilms[index])}>Remove</RemoveButton>
+                  {filmTitle.title}
+                  <RemoveButton onClick={() => handleRemoveFilm(filmTitle.id)}>Remove</RemoveButton>
                 </Li>
               ))
             ) : (

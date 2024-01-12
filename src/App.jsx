@@ -24,14 +24,13 @@ function App() {
 
   const fetchData = async () => {
     try {
+      const response = await axios.get("https://repulsive-crab-hem.cyclic.app/api/films");
+      const data = await response.data.data;
       if (!token) {
-        const response = await fetch("https://repulsive-crab-hem.cyclic.app/api/films");
-        const data = await response.json(); //convert data to json
-        setFilms(data.data.films.map((film) => ({ ...film, isFaved: favefilmIds.includes(film._id) })));
+        setFilms(data.films.map((film) => ({ ...film, isFaved: favefilmIds.includes(film._id) })));
       }
       if (token) {
-        const response = await axios.get("https://repulsive-crab-hem.cyclic.app/api/films");
-        const data = response.data.data;
+        const data = await response.data.data;
         const favouriteFilmIds = user.favouriteFilms.map((film) => film._id);
         const updatedFilms = data.films.map((film) => ({
           ...film,
@@ -39,7 +38,6 @@ function App() {
         }));
         setFilms(updatedFilms);
       }
-
       setLoading(false);
     } catch (error) {
       console.error("Error fetching films:", error);
@@ -96,54 +94,36 @@ function App() {
           return updatedFilms;
         });
       } else {
-        const response = await axios.post(
-          `https://repulsive-crab-hem.cyclic.app/api/users/${user.username}/films/${filmId}`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        const film = films.find((f) => f._id === filmId);
+        if (film && film.isFaved) {
+          const response = await axios.delete(
+            `https://repulsive-crab-hem.cyclic.app/api/users/${user.username}/films/${filmId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          if (response.status === 204) {
+            setFilms((films) => films.map((film) => (film._id === filmId ? { ...film, isFaved: false } : film)));
           }
-        );
-
-        if (response.status === 200) {
-          // Update state with the response
-          setFilms((films) => films.map((film) => (film._id === filmId ? { ...film, isFaved: true } : film)));
+        } else {
+          const response = await axios.post(
+            `https://repulsive-crab-hem.cyclic.app/api/users/${user.username}/films/${filmId}`,
+            {},
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          if (response.status === 200) {
+            setFilms((films) => films.map((film) => (film._id === filmId ? { ...film, isFaved: true } : film)));
+          }
         }
       }
     } catch (error) {
       console.error("Error toggling favourite:", error);
-    }
-  };
-
-  const removeFave = async (filmId) => {
-    try {
-      if (!token) {
-        setFilms((films) => {
-          const updatedFilms = films.map((film) => (film._id === filmId ? { ...film, isFaved: !film.isFaved } : film));
-
-          localStorage.setItem(
-            "favefilmIds",
-            JSON.stringify(updatedFilms.filter(({ isFaved }) => isFaved).map(({ _id }) => _id))
-          );
-
-          return updatedFilms;
-        });
-      } else {
-        const response = await axios.delete(
-          `https://repulsive-crab-hem.cyclic.app/api/users/${user.username}/films/${filmId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (response.status === 204) {
-          setFilms((films) => films.map((film) => (film._id === filmId ? { ...film, isFaved: false } : film)));
-        }
-      }
-    } catch (error) {
-      console.error("Error removing favourite:", error);
     }
   };
 
@@ -195,7 +175,7 @@ function App() {
     : films;
 
   const selectedFilm = films.find((film) => film.isPicked);
-  const totalFavouriteFilms = films.filter((film) => film.isFaved).length;
+  const totalFavouriteFilms = token ? films.filter((film) => film.isFaved).length : favefilmIds.length;
   return (
     <>
       <Router>
@@ -210,7 +190,6 @@ function App() {
                     filterFilms={filterFilms}
                     showFaves={showFaves}
                     toggleShowFaves={toggleShowFaves}
-                    favefilmIds={favefilmIds.length}
                     totalFavouriteFilms={totalFavouriteFilms}
                   />
                 </>
@@ -230,7 +209,6 @@ function App() {
                   films={displayFilms}
                   pickFilm={pickFilm}
                   isPanelOpen={showPanel}
-                  removeFave={removeFave}
                   title={hasFiltered ? "Search results" : "All Films"}
                 />
               )
@@ -238,18 +216,10 @@ function App() {
           />
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<SignUp />} />
-          <Route path='/profile' element={<Profile />} />
+          <Route path='/profile' element={<Profile films={films} />} />
         </Routes>
         <Transition in={showPanel} timeout={300}>
-          {(state) => (
-            <SidePanel
-              film={selectedFilm}
-              closePanel={closePanel}
-              toggleFave={toggleFave}
-              removeFave={removeFave}
-              state={state}
-            />
-          )}
+          {(state) => <SidePanel film={selectedFilm} closePanel={closePanel} toggleFave={toggleFave} state={state} />}
         </Transition>
       </Router>
     </>

@@ -3,15 +3,14 @@ import { SearchContainer, Input, Wrapper, FaveButtonContainer, Counter, SearchCl
 import MagnifyingIcon from "../../assets/search.svg";
 const token = localStorage.getItem("token");
 
-const FaveButton = ({ showFaves, favefilmIds, toggleShowFaves, totalFavouriteFilms }) => (
+const FaveButton = ({ showFaves, toggleShowFaves, totalFavouriteFilms }) => (
   <FaveButtonContainer>
-    {!token && <Counter>{favefilmIds}</Counter>}
-    {token && <Counter>{totalFavouriteFilms}</Counter>}
+    <Counter>{totalFavouriteFilms}</Counter>
     <FavouriteButton onClick={toggleShowFaves}>{showFaves ? "Hide faves" : "Show faves"}</FavouriteButton>
   </FaveButtonContainer>
 );
 
-const Search = ({ filterFilms, showFaves, favefilmIds, toggleShowFaves, totalFavouriteFilms }) => {
+const Search = ({ filterFilms, showFaves, toggleShowFaves, totalFavouriteFilms }) => {
   const inputEl = useRef(null);
   const [showOnDesktop, setShowOnDesktop] = useState(false);
 
@@ -31,12 +30,7 @@ const Search = ({ filterFilms, showFaves, favefilmIds, toggleShowFaves, totalFav
 
   return (
     <Wrapper>
-      <FaveButton
-        showFaves={showFaves}
-        favefilmIds={favefilmIds}
-        toggleShowFaves={toggleShowFaves}
-        totalFavouriteFilms={totalFavouriteFilms}
-      />
+      <FaveButton showFaves={showFaves} toggleShowFaves={toggleShowFaves} totalFavouriteFilms={totalFavouriteFilms} />
       <SearchContainer $showOnDesktop={showOnDesktop}>
         <img src={MagnifyingIcon} onClick={toggleSearch} style={{ width: "20px" }} />
         <Input ref={inputEl} type='text' name='search' autoComplete='off' onChange={handleChange} />
